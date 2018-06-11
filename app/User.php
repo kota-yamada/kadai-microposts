@@ -44,38 +44,36 @@ class User extends Authenticatable
     
     public function follow($userId)
     {
-    // confirm if already following
-    $exist = $this->is_following($userId);
-    // confirming that it is not you
-    $its_me = $this->id == $userId;
+        // confirm if already following
+        $exist = $this->is_following($userId);
+        // confirming that it is not you
+        $its_me = $this->id == $userId;
 
-    if ($exist || $its_me) {
-        // do nothing if already following
-        return false;
-        }   
-    else {
-        // follow if not following
-        $this->followings()->attach($userId);
-        return true;
+        if ($exist || $its_me) {
+            // do nothing if already following
+            return false;
+        } else {
+            // follow if not following
+            $this->followings()->attach($userId);
+            return true;
         }
     }
 
     public function unfollow($userId)
     {
-    // confirming if already following
-    $exist = $this->is_following($userId);
-    // confirming that it is not you
-    $its_me = $this->id == $userId;
+        // confirming if already following
+        $exist = $this->is_following($userId);
+        // confirming that it is not you
+        $its_me = $this->id == $userId;
 
 
-    if ($exist && !$its_me) {
-        // stop following if following
-        $this->followings()->detach($userId);
-        return true;
-        } 
-    else {
-        // do nothing if not following
-        return false;
+        if ($exist && !$its_me) {
+            // stop following if following
+            $this->followings()->detach($userId);
+            return true;
+        } else {
+            // do nothing if not following
+            return false;
         }
     }
 
@@ -91,5 +89,49 @@ class User extends Authenticatable
         return Micropost::whereIn('user_id', $follow_user_ids);
     }
 
+    //fav function
     
+    public function favorites()
+    {
+        return $this->belongsToMany(Micropost::class, 'posts_fav', 'user_id', 'fav_id')->withTimestamps();
+    }
+
+    public function fav($favedId)
+    {
+        // confirm if already faving
+        $exist = $this->is_faving($favedId);
+        
+
+        if ($exist) {
+            // do nothing if already following
+            return false;
+        } else {
+            // follow if not following
+            $this->favorites()->attach($favedId);
+            return true;
+        }
+    }
+
+    public function unfav($favedId)
+    {
+        // confirming if already following
+        $exist = $this->is_faving($favedId);
+        
+
+
+        if ($exist) {
+            // stop following if following
+            $this->favorites()->detach($favedId);
+            return true;
+        } else {
+            // do nothing if not following
+            return false;
+        }
+    }
+
+
+    public function is_faving($favedId) {
+        return $this->favorites()->where('fav_id', $favedId)->exists();
+    }
+
 }
