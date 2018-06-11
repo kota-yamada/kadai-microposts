@@ -2,15 +2,18 @@
 
 @section('content')
     @if (Auth::check())
-        <div class="row">
-            <aside class="col-md-4">
-            </aside>
-            <div class="col-xs-8">
+       
+            
+            <div class="row col-xs-offset-4 col-xs-4">
                 @if (count($microposts) > 0)
                     @include('microposts.microposts', ['microposts' => $microposts])
-                @endif
+                
+            
+        
+                @else <h1>Follow & make lists To Start TimeLine </h1>
+                
             </div>
-        </div>
+    @endif    
     @else
         <div class="center jumbotron">
             <div class="text-center">
